@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+
+# import(lpSolveAPI)
+# import(magrittr)
+# importFrom("ggplot2","ggplot","geom_histogram")

@@ -1,0 +1,22 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# This is a package of estimating the conditional minimum
+
+This is a package of estimating the conditional minimum, it includes two functions in this package. The first function `gen_dat` to generate test dataset, and the second function `estcondmin` to estimation the coeficients of the model. 
+
+
+## 一些问题
+
+1. 如何添加数学公式？
