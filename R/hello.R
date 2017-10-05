@@ -1,20 +1,10 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Build and Reload Package:  'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
+#'
+#' hello
+#'
+#' @export
 
 hello <- function() {
-  print("Hello, world!")
+  print("Hello, Jared, you are the best!")
 }
 
 #'
@@ -25,7 +15,6 @@ hello <- function() {
 #'
 #'
 #' @param n A integer that gives the sample size
-#'
 #' @param beta A vector gives the coeficients of the true model
 #'
 #' @return This function returns a list of two element \code{y} and \code{X}
@@ -51,19 +40,17 @@ gen_dat <- function(n = 100, beta = c(1,1)){
 #' from the dataset.
 #'
 #' @param y A vector that gives the predict variable
-#'
 #' @param X A matrix that gives the samples of features
-#'
 #' @param lambda A number to penalize the complexity of the model
 #'
 #' @return A coeficient of selected feature form the sufficient condition.
 #'
+#' @importFrom lpSolveAPI make.lp set.column set.constr.type set.rhs set.bounds set.objfn
+#' @importFrom magrittr "%>%"
+#'
 #' @examples
 #' d = gen_dat()
 #' estcondmin(d$y, d$X, lambda = 0.1)
-#'
-#' @import lpSolveAPI
-#' @import magrittr
 #'
 #' @export
 estcondmin <- function(y, X, lambda = 0){
@@ -74,19 +61,64 @@ estcondmin <- function(y, X, lambda = 0){
   A <- cbind(rbind(X, -diag(1,nrow = p), diag(1, nrow = p)),
              rbind(matrix(0,n,p), -diag(1,nrow = p), -diag(1, nrow = p)))
   b <- c(y, rep(0, 2*p))
+  # @import lpSolveAPI make.lp set.column set.constr.type set.rhs set.bounds set.objfn
+
+  # library(lpSolveAPI)
+  # library(magrittr)
+  lps.model <- lpSolveAPI::make.lp(n+ 2*p, 2*p)
+  for (i in 1:(2*p)) {
+    lpSolveAPI::set.column(lps.model, i, A[,i])
+  }
+  lpSolveAPI::set.constr.type(lps.model, rep("<=", n + 2*p))
+  lpSolveAPI::set.rhs(lps.model, b = b)
+  lpSolveAPI::set.bounds(lps.model,lower=rep(-Inf, 2*p),upper=rep(Inf, 2*p))
+  lpSolveAPI::set.objfn(lps.model,obj=w)
+  solve(lps.model)
+  lpSolveAPI::get.variables(lps.model) %>%
+    matrix(ncol = 2) %>%
+    (function(dat) dat[,1])
+}
+
+#'
+#' Function 2 to optimize
+#'
+#' This is a function of estimate the coeficients of some sufficient condition
+#' from the dataset.
+#'
+#' @param y A vector that gives the predict variable
+#' @param X A matrix that gives the samples of features
+#' @param lambda A number to penalize the complexity of the model
+#' @param epsilon A muber of disturb to the central point
+#'
+#' @return A coeficient of selected feature form the sufficient condition.
+#'
+#' @examples
+#' d = gen_dat()
+#' estcondmin(d$y, d$X, lambda = 0.1)
+#'
+#' @export
+estcondmin2 <- function(y, X, lambda = 0, epsilon = 0.01){
+  p <- ncol(X)
+  n <- nrow(X)
+  c <- colMeans(X) + rnorm(1, sd = epsilon)
+  w = c(-c, rep(lambda,p))
+  A <- cbind(rbind(X, -diag(1,nrow = p), diag(1, nrow = p)),
+             rbind(matrix(0,n,p), -diag(1,nrow = p), -diag(1, nrow = p)))
+  b <- c(y, rep(0, 2*p))
+  # @import lpSolveAPI make.lp set.column set.constr.type set.rhs set.bounds set.objfn
 
   library(lpSolveAPI)
   library(magrittr)
-  lps.model <- make.lp(n+ 2*p, 2*p)
+  lps.model <- lpSolveAPI::make.lp(n+ 2*p, 2*p)
   for (i in 1:(2*p)) {
-    set.column(lps.model, i, A[,i])
+    lpSolveAPI::set.column(lps.model, i, A[,i])
   }
-  set.constr.type(lps.model, rep("<=", n + 2*p))
-  set.rhs(lps.model, b = b)
-  set.bounds(lps.model,lower=rep(-Inf, 2*p),upper=rep(Inf, 2*p))
-  set.objfn(lps.model,obj=w)
+  lpSolveAPI::set.constr.type(lps.model, rep("<=", n + 2*p))
+  lpSolveAPI::set.rhs(lps.model, b = b)
+  lpSolveAPI::set.bounds(lps.model,lower=rep(-Inf, 2*p),upper=rep(Inf, 2*p))
+  lpSolveAPI::set.objfn(lps.model,obj=w)
   solve(lps.model)
-  get.variables(lps.model) %>%
+  lpSolveAPI::get.variables(lps.model) %>%
     matrix(ncol = 2) %>%
     (function(dat) dat[,1])
 }
