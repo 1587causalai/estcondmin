@@ -1,6 +1,11 @@
 # estcondmin
 
+[Travis badge](https://travis-ci.org/HeyangGong/estcondmin.svg?branch=master)
+
+
 The goal of estcondmin is to estimate the conditional minn of y give X.
+
+To get started, read the details of this data analysis package in vignette
 
 ## Example
 
