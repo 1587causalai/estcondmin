@@ -90,6 +90,10 @@ estcondmin <- function(y, X, lambda = 0){
 #' @param lambda A number to penalize the complexity of the model
 #' @param epsilon A muber of disturb to the central point
 #'
+#' @importFrom lpSolveAPI make.lp set.column set.constr.type set.rhs set.bounds set.objfn
+#' @importFrom magrittr "%>%"
+#' @importFrom stats rnorm rexp
+#'
 #' @return A coeficient of selected feature form the sufficient condition.
 #'
 #' @examples
@@ -106,9 +110,9 @@ estcondmin2 <- function(y, X, lambda = 0, epsilon = 0.01){
              rbind(matrix(0,n,p), -diag(1,nrow = p), -diag(1, nrow = p)))
   b <- c(y, rep(0, 2*p))
   # @import lpSolveAPI make.lp set.column set.constr.type set.rhs set.bounds set.objfn
-
-  library(lpSolveAPI)
-  library(magrittr)
+#
+#   library(lpSolveAPI)
+#   library(magrittr)
   lps.model <- lpSolveAPI::make.lp(n+ 2*p, 2*p)
   for (i in 1:(2*p)) {
     lpSolveAPI::set.column(lps.model, i, A[,i])
