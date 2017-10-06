@@ -1,6 +1,6 @@
 # estcondmin
 
-[Travis badge](https://travis-ci.org/HeyangGong/estcondmin.svg?branch=master)
+![Travis badge](https://travis-ci.org/HeyangGong/estcondmin.svg?branch=master)
 
 
 The goal of estcondmin is to estimate the conditional minn of y give X.
