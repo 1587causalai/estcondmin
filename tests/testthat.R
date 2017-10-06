@@ -6,5 +6,5 @@ test_that("hello, test", {
 })
 
 test_that("gen_dat test", {
-  expect_that(gen_dat, is_a("list"))
+  expect_that(gen_dat(), is_a("list"))
 })
